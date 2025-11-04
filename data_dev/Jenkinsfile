@@ -57,7 +57,7 @@ pipeline {
         success {
             echo 'Pipeline executed successfully!'
 
-            archiveArtifacts artifacts: 'generated_report/report.html', fingerprint: true
+            archiveArtifacts artifacts: 'report.html', fingerprint: true
         }
 
         failure {
