@@ -13,7 +13,7 @@ pipeline {
                 python3 -m venv venv
                 . venv/bin/activate
                 pip install --upgrade pip
-                pip install -r "PyTest DQ Framework/requirements.txt"
+                pip install -r PyTest_DQ_Framework/requirements.txt
                 '''
             }
         }
@@ -23,13 +23,13 @@ pipeline {
                 sh '''
                 . venv/bin/activate
 
-                pytest "PyTest DQ Framework/tests" -m parquet_data \
+                pytest PyTest_DQ_Framework/tests -m parquet_data \
                     --db_host="postgres" \
                     --db_port="5432" \
                     --db_name="mydatabase" \
-                    --db_user="$POSTGRES_SECRET_USR" \
-                    --db_password="$POSTGRES_SECRET_PSW" \
-                    --html="PyTest DQ Framework/html_report/index.html" \
+                    --db_user="${POSTGRES_SECRET_USR}" \
+                    --db_password="${POSTGRES_SECRET_PSW}" \
+                    --html=PyTest_DQ_Framework/html_report/index.html \
                     --self-contained-html
                 '''
             }
@@ -37,12 +37,12 @@ pipeline {
 
         stage('Archive Test Report') {
             steps {
-                archiveArtifacts artifacts: 'PyTest DQ Framework/html_report/**', allowEmptyArchive: true
+                archiveArtifacts artifacts: 'PyTest_DQ_Framework/html_report/**', allowEmptyArchive: false
 
                 publishHTML(target: [
                     allowMissing: false,
                     keepAll: true,
-                    reportDir: 'PyTest DQ Framework/html_report',
+                    reportDir: 'PyTest_DQ_Framework/html_report',
                     reportFiles: 'index.html',
                     reportName: 'HTML Data Quality Report'
                 ])
