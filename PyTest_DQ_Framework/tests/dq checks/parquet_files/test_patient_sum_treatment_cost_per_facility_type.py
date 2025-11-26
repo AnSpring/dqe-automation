@@ -51,14 +51,14 @@ def test_dataset_is_not_empty(target_data, data_quality_library):
 
 @pytest.mark.parquet_data
 @pytest.mark.patient_sum_treatment_cost_per_facility_type
-@pytest.mark.xfail(reason="Synthetic parquet ≠ SQL source dataset (row mismatches expected)")
+@pytest.mark.xfail(reason="Synthetic parquet not equal SQL source dataset (row mismatches expected)")
 def test_check_count(source_data, target_data, data_quality_library):
     data_quality_library.check_count(source_data, target_data)
 
 
 @pytest.mark.parquet_data
 @pytest.mark.patient_sum_treatment_cost_per_facility_type
-#@pytest.mark.xfail(reason="Synthetic parquet misses some SQL rows — expected for demo data")
+#@pytest.mark.xfail(reason="Synthetic parquet misses some SQL rows expected for demo data")
 def test_check_data_full_data_set(source_data, target_data, data_quality_library):
     data_quality_library.check_data_full_data_set(source_data, target_data)
 

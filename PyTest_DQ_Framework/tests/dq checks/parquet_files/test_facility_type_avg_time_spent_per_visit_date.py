@@ -43,14 +43,14 @@ def test_check_dataset_is_not_empty(target_data, data_quality_library):
 
 @pytest.mark.parquet_data
 @pytest.mark.facility_type_avg_time_spent_per_visit_date
-@pytest.mark.xfail(reason="Known ETL gap: row count mismatch between SQL source and parquet output")
+@pytest.mark.xfail(reason="Row count mismatch between SQL source and parquet output")
 def test_check_count(source_data, target_data, data_quality_library):
     data_quality_library.check_count(source_data, target_data)
 
 
 @pytest.mark.parquet_data
 @pytest.mark.facility_type_avg_time_spent_per_visit_date
-@pytest.mark.xfail(reason="Known ETL gap: parquet dataset does not fully match SQL aggregated data")
+@pytest.mark.xfail(reason="Parquet dataset does not fully match SQL aggregated data")
 def test_check_data_full_data_set(source_data, target_data, data_quality_library):
     data_quality_library.check_data_full_data_set(source_data, target_data)
 

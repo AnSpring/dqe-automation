@@ -51,7 +51,7 @@ def test_dataset_is_not_empty(target_data, data_quality_library):
 
 @pytest.mark.parquet_data
 @pytest.mark.facility_name_min_time_spent_per_visit_date
-@pytest.mark.xfail(reason="Known ETL gap: parquet missing part of min_time_spent aggregation")
+@pytest.mark.xfail(reason="Parquet missing part of min_time_spent aggregation")
 def test_check_data_full_data_set(source_data, target_data, data_quality_library):
     data_quality_library.check_data_full_data_set(source_data, target_data)
 
@@ -65,7 +65,7 @@ def test_check_count(source_data, target_data, data_quality_library):
 
 @pytest.mark.parquet_data
 @pytest.mark.facility_name_min_time_spent_per_visit_date
-@pytest.mark.xfail(reason="Known issue: parquet contains duplicate facility_name/date combinations")
+@pytest.mark.xfail(reason="Parquet contains duplicate facility_name/date combinations")
 def test_check_duplicates(target_data, data_quality_library):
     data_quality_library.check_duplicates(target_data)
 
