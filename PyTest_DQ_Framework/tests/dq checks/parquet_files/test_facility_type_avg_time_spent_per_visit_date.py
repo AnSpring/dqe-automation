@@ -9,15 +9,22 @@ import pytest
 @pytest.fixture(scope="module")
 def source_data(db_connection):
     query = """
-        SELECT facility_type,visit_date, avg_time_spent
-        FROM core.facility_type_avg_time_spent_per_visit_date
-        ORDER BY facility_type, visit_date"""
+    SELECT 
+        f.facility_type,
+        DATE(v.visit_timestamp) AS visit_date,
+        AVG(v.duration_minutes) AS avg_time_spent
+    FROM public.src_generated_visits v
+    JOIN public.src_generated_facilities f 
+        ON f.facility_id = v.facility_id
+    GROUP BY 1,2
+    ORDER BY 1,2;
+"""
     return db_connection.get_data_sql(query)
 
 
 @pytest.fixture(scope="module")
 def target_data(parquet_reader):
-    target_path = "/parquet_data/facility_type_avg_time_spent_per_visit_date"
+    target_path = "PyTest_DQ_Framework/parquet_data/facility_type_avg_time_spent_per_visit_date"
     return parquet_reader.process(target_path, include_subfolders=True)
 
 

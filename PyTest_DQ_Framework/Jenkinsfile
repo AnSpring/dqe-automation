@@ -9,53 +9,52 @@ pipeline {
 
         stage('Install dependencies') {
             steps {
-                sh '''#!/bin/bash
-                set -e
+                sh '''
+#!/bin/bash
+set -e
 
-                echo ">>> Creating virtual environment"
-                python3 -m venv venv
+echo ">>> Creating virtual environment"
+python3 -m venv venv
 
-                echo ">>> Activating venv"
-                source venv/bin/activate
+echo ">>> Activating venv"
+source venv/bin/activate
 
-                echo ">>> Upgrading pip"
-                pip install --upgrade pip
+echo ">>> Upgrading pip"
+pip install --upgrade pip
 
-                echo ">>> Installing project requirements"
-                pip install -r PyTest_DQ_Framework/requirements.txt
-                '''
+echo ">>> Installing project requirements"
+pip install -r PyTest_DQ_Framework/requirements.txt
+'''
             }
         }
 
         stage('Run PyTest') {
             steps {
-                sh '''#!/bin/bash
-                set -e
+                sh '''
+#!/bin/bash
+set -e
 
-                echo ">>> Activating virtual environment"
-                source venv/bin/activate
+echo ">>> Activating virtual environment"
+source venv/bin/activate
 
-                echo ">>> Running PyTest for parquet_data tests"
-                pytest PyTest_DQ_Framework/tests -m parquet_data \
-                    --db_host="postgres" \
-                    --db_port="5432" \
-                    --db_name="mydatabase" \
-                    --db_user="${POSTGRES_SECRET_USR}" \
-                    --db_password="${POSTGRES_SECRET_PSW}" \
-                    --html=PyTest_DQ_Framework/html_report/index.html \
-                    --self-contained-html
-                '''
+echo ">>> Running PyTest for parquet_data tests"
+pytest PyTest_DQ_Framework/tests -m parquet_data \
+    --db_host=postgres \
+    --db_port=5432 \
+    --db_name=mydatabase \
+    --db_user="${POSTGRES_SECRET_USR}" \
+    --db_password="${POSTGRES_SECRET_PSW}" \
+    --html=PyTest_DQ_Framework/html_report/index.html \
+    --self-contained-html
+'''
             }
         }
 
         stage('Archive Test Report') {
             steps {
-                echo ">>> Archiving html_report directory"
+                archiveArtifacts artifacts: 'PyTest_DQ_Framework/html_report/**', allowEmptyArchive: false
 
-                archiveArtifacts artifacts: 'PyTest_DQ_Framework/html_report/**',
-                                  allowEmptyArchive: false
-
-                publishHTML([
+                publishHTML(target: [
                     allowMissing: false,
                     keepAll: true,
                     reportDir: 'PyTest_DQ_Framework/html_report',

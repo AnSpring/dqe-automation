@@ -14,12 +14,19 @@ def source_data(db_connection):
     Loads source data from PostgreSQL.
     """
 
-    source_query = """
-        SELECT facility_name, visit_date, min_time_spent
-        FROM core.facility_name_min_time_spent_per_visit_date
-        ORDER BY facility_name, visit_date"""
+    query = """
+    SELECT 
+        f.facility_name,
+        DATE(v.visit_timestamp) AS visit_date,
+        MIN(v.duration_minutes) AS min_time_spent
+    FROM public.src_generated_visits v
+    JOIN public.src_generated_facilities f 
+        ON f.facility_id = v.facility_id
+    GROUP BY 1,2
+    ORDER BY 1,2;
+"""
 
-    source_df = db_connection.get_data_sql(source_query)
+    source_df = db_connection.get_data_sql(query)
     return source_df
 
 
@@ -29,7 +36,7 @@ def target_data(parquet_reader):
     Loads transformed data from Parquet.
     """
 
-    target_path = "/parquet_data/facility_name_min_time_spent_per_visit_date"
+    target_path = "PyTest_DQ_Framework/parquet_data/facility_name_min_time_spent_per_visit_date"
 
     target_df = parquet_reader.process(
         target_path,

@@ -13,10 +13,16 @@ def source_data(db_connection):
     Load aggregated source dataset from Postgres.
     """
     query = """
-        SELECT facility_type, patient_id, SUM(treatment_cost) AS sum_treatment_cost
-        FROM core.patient_sum_treatment_cost_per_facility_type
-        GROUP BY facility_type, patient_id
-        ORDER BY facility_type, patient_id"""
+    SELECT
+        f.facility_type,
+        v.patient_id,
+        SUM(v.treatment_cost) AS total_cost
+    FROM public.src_generated_visits v
+    JOIN public.src_generated_facilities f 
+        ON f.facility_id = v.facility_id
+    GROUP BY 1,2
+    ORDER BY 1,2;
+"""
 
     try:
         return db_connection.get_data_sql(query)
@@ -29,7 +35,7 @@ def target_data(parquet_reader):
     """
     Load target Parquet data.
     """
-    target_path = "/parquet_data/patient_sum_treatment_cost_per_facility_type"
+    target_path = "PyTest_DQ_Framework/parquet_data/patient_sum_treatment_cost_per_facility_type"
 
     try:
         return parquet_reader.process(target_path, include_subfolders=True)
@@ -65,5 +71,5 @@ def test_check_duplicates(target_data, data_quality_library):
 @pytest.mark.parquet_data
 @pytest.mark.patient_sum_treatment_cost_per_facility_type
 def test_not_null_values(target_data, data_quality_library):
-    required_cols = ["facility_type", "patient_id", "sum_treatment_cost"]
-    data_quality_library.check_not_null_values(target_data, required_cols)
+    required_columns = ["facility_type", "patient_id", "total_cost"]
+    data_quality_library.check_not_null_values(target_data, required_columns)
