@@ -58,7 +58,7 @@ def test_check_count(source_data, target_data, data_quality_library):
 
 @pytest.mark.parquet_data
 @pytest.mark.patient_sum_treatment_cost_per_facility_type
-@pytest.mark.xfail(reason="Synthetic parquet misses some SQL rows — expected for demo data")
+#@pytest.mark.xfail(reason="Synthetic parquet misses some SQL rows — expected for demo data")
 def test_check_data_full_data_set(source_data, target_data, data_quality_library):
     data_quality_library.check_data_full_data_set(source_data, target_data)
 
