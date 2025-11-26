@@ -7,6 +7,7 @@ Author(s): Anastazja Bobrowa
 import pytest
 import pandas as pd
 
+
 @pytest.fixture(scope="module")
 def source_data(db_connection):
     query = """
@@ -19,7 +20,7 @@ def source_data(db_connection):
         ON f.facility_id = v.facility_id
     GROUP BY 1,2
     ORDER BY 1,2;
-"""
+    """
     df = db_connection.get_data_sql(query)
     df["visit_date"] = pd.to_datetime(df["visit_date"])
     return df
@@ -29,10 +30,13 @@ def source_data(db_connection):
 def target_data(parquet_reader):
     target_path = "PyTest_DQ_Framework/parquet_data/facility_type_avg_time_spent_per_visit_date"
     df = parquet_reader.process(target_path, include_subfolders=True)
-
     df["visit_date"] = pd.to_datetime(df["visit_date"])
     return df
 
+
+# ─────────────────────────────────────────────────────────────
+# TESTS WITH MARKERS AND XFAIL WHERE EXPECTED
+# ─────────────────────────────────────────────────────────────
 
 @pytest.mark.parquet_data
 @pytest.mark.facility_type_avg_time_spent_per_visit_date
@@ -43,14 +47,14 @@ def test_check_dataset_is_not_empty(target_data, data_quality_library):
 
 @pytest.mark.parquet_data
 @pytest.mark.facility_type_avg_time_spent_per_visit_date
-@pytest.mark.xfail(reason="Known ETL gap: row count mismatch between source and parquet")
+@pytest.mark.xfail(reason="Known ETL gap: row count mismatch between SQL source and parquet output")
 def test_check_count(source_data, target_data, data_quality_library):
     data_quality_library.check_count(source_data, target_data)
 
 
 @pytest.mark.parquet_data
 @pytest.mark.facility_type_avg_time_spent_per_visit_date
-@pytest.mark.xfail(reason="Known ETL gap: parquet missing part of aggregated data for facility_type/date")
+@pytest.mark.xfail(reason="Known ETL gap: parquet dataset does not fully match SQL aggregated data")
 def test_check_data_full_data_set(source_data, target_data, data_quality_library):
     data_quality_library.check_data_full_data_set(source_data, target_data)
 
