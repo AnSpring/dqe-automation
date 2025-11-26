@@ -5,6 +5,7 @@ Author(s): Anastazja Bobrowa
 """
 
 import pytest
+import pandas as pd
 
 @pytest.fixture(scope="module")
 def source_data(db_connection):
@@ -19,13 +20,18 @@ def source_data(db_connection):
     GROUP BY 1,2
     ORDER BY 1,2;
 """
-    return db_connection.get_data_sql(query)
+    df = db_connection.get_data_sql(query)
+    df["visit_date"] = pd.to_datetime(df["visit_date"])
+    return df
 
 
 @pytest.fixture(scope="module")
 def target_data(parquet_reader):
     target_path = "PyTest_DQ_Framework/parquet_data/facility_type_avg_time_spent_per_visit_date"
-    return parquet_reader.process(target_path, include_subfolders=True)
+    df = parquet_reader.process(target_path, include_subfolders=True)
+
+    df["visit_date"] = pd.to_datetime(df["visit_date"])
+    return df
 
 
 @pytest.mark.parquet_data
