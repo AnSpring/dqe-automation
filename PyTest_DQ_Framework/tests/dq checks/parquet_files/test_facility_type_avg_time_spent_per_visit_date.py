@@ -34,10 +34,6 @@ def target_data(parquet_reader):
     return df
 
 
-# ─────────────────────────────────────────────────────────────
-# TESTS WITH MARKERS AND XFAIL WHERE EXPECTED
-# ─────────────────────────────────────────────────────────────
-
 @pytest.mark.parquet_data
 @pytest.mark.facility_type_avg_time_spent_per_visit_date
 @pytest.mark.smoke
