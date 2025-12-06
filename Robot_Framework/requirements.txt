@@ -1,0 +1,6 @@
+robotframework
+robotframework-seleniumlibrary
+pandas
+pyarrow
+selenium
+webdriver-manager
